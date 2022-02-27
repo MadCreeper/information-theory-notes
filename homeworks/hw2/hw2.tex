@@ -1,0 +1,131 @@
+\documentclass[12pt,a4paper]{article}
+%\title{Lab6-Lucene3（自定义Similarity）}
+\usepackage{ctex}
+\usepackage{amsmath,amscd,amsbsy,amssymb,latexsym,url,bm,amsthm}
+\usepackage{epsfig,graphicx,subfigure}
+\usepackage{enumitem,balance}
+\usepackage{wrapfig}
+\usepackage{mathrsfs,euscript}
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage[vlined,ruled,commentsnumbered,linesnumbered]{algorithm2e}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{listings}
+\geometry{a4paper,scale=0.8}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+% --- Python code template ---
+\usepackage[utf8]{inputenc}
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+\usepackage{listings}
+
+% Python style for highlighting
+\newcommand\pythonstyle{\lstset{
+language=Python,
+basicstyle=\ttm,
+morekeywords={self},              % Add keywords here
+keywordstyle=\ttb\color{deepblue},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttb\color{deepred},    % Custom highlighting style
+stringstyle=\color{deepgreen},
+frame=tb,                         % Any extra options here
+showstringspaces=false
+}}
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+% Python for external files
+\newcommand\pythonexternal[2][]{{
+\pythonstyle
+\lstinputlisting[#1]{#2}}}
+
+% Python for inline
+\newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
+
+% --- Python code template ---
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\newcommand{\ve}[1]{\boldsymbol{#1}}
+\newcommand{\vve}[1]{\boldsymbol{#1}}
+\DeclareMathOperator{\st}{s.t.}
+
+% Macros
+\newcommand{\mb}{\mathbb}
+
+%\title{Homework\quad 1}
+%\date{2021.11}
+%\author{孙济宸\quad \quad 学号：520030910016 \quad  \quad 班级：F2003003}
+\begin{document}
+%\maketitle
+
+Homework 2
+
+DDL: March 2
+
+孙济宸 \quad 520030910016
+
+\section{}
+\subsection{a}
+$$H(X) - H(X|Y) = \mb{E}-\log p(X) + \mb{E} \log p(X|Y)$$
+$$=\mb{E}-\log p(X) + \mb{E} \log \frac{p(X,Y)}{p(Y)} = \mb{E}\log \frac{p(X,Y)}{p(X)p(Y)} = I(X;Y)$$
+
+\subsection{b}
+$$H(X) + H(Y) -  H(X,Y) = \mb{E}-\log p(X) + + \mb{E}-\log p(Y) \mb{E} \log p(X,Y)$$
+$$= \mb{E}\log \frac{p(X,Y)}{p(X)p(Y)} = I(X;Y)$$
+
+\subsection{c}
+$$H(X|Z) + H(Y|Z) -  H(X,Y|Z) = \mb{E}-\log p(X|Z) + + \mb{E}-\log p(Y|Z) \mb{E} \log p(X,Y|Z)$$
+$$= \mb{E}\log \frac{p(X,Y|Z)}{p(X|Z)p(Y|Z)} = I(X;Y|Z)$$
+\section{}
+\subsection{a}\noindent
+if: 
+
+$$p(x)= q(x)$$
+$$D(p||q) = \sum_{x\in X} p(x)\log \frac{p(x)}{q(x)}=0$$
+only if: 
+$$D(p||q) = -\sum_{x\in X} p(x)\log \frac{q(x)}{p(x)} \geq \sum_{x\in X} p(x)(1-\frac{q(x)}{p(x)}) = \sum_{x\in X} p(x) - \sum_{x\in X} q(x) =0$$
+with equality only if $p=q$ for all $x\in X$.
+\subsection{b}\noindent
+if: 
+
+$X$ and $Y$ are independent,
+$$I(X;Y) = H(X) - H(X|Y)= H(X) - H(X) = 0$$
+only if:
+$$I(X;Y) = D(p(x,y)||p(x)p(y)) = 0$$
+From (a), we know $$p(x,y)=p(x)p(y)$$. i.e. $X$ and $Y$ are independent
+
+\subsection{c}\noindent
+if: 
+
+$$p(y|x)= q(y|x), \forall x,y s.t.p(x)>0$$
+$$D(p(y|x)||q(y|x)) = \sum_{x\in X} p(x) \sum_{y\in Y} p(y|x)\log \frac{p(y|x)}{q(y|x)}=0$$
+only if: 
+$$D(p(y|x)||q(y|x)) = -\sum_{x\in X} p(x) \sum_{y\in Y} p(y|x)\log \frac{q(y|x)}{p(y|x)}  $$
+$$ \geq \sum_{x\in X} p(x) \sum_{y\in Y} p(y|x)(1-  \frac{q(y|x)}{p(y|x)} ) = \sum_{x\in X} p(x)[ \sum_{y\in Y} p(y|x) - \sum_{y\in Y} {q(y|x)} ] = 0 $$
+with equality only if $p(y|x)=q(y|x)$ for all $p(x)>0$.
+\subsection{d}\noindent
+if: 
+
+$X$ and $Y$ are conditionally independent given $Z$,
+$$I(X;Y|Z) = H(X|Z) - H(X|Y,Z)= H(X|Z) - H(X|Z) = 0$$
+only if:
+$$I(X;Y|Z) = D(p(x,y|z)||p(x|z)p(y|z)) = 0$$
+$$p(x,y|z)=p(x|z)p(y|z)$$. i.e. $X$ and $Y$ are conditionally independent given $Z$
+
+\end{document}
+
